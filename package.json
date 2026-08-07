@@ -1,11 +1,11 @@
 {
   "name": "dynamicsteck-timesheet",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "private": true,
   "type": "module",
   "description": "Minimal timesheet tracker with spreadsheet export",
   "engines": {
-    "node": ">=22.5"
+    "node": ">=20"
   },
   "scripts": {
     "start": "node server.js",

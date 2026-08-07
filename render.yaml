@@ -10,7 +10,7 @@ services:
     healthCheckPath: /api/health
     envVars:
       - key: NODE_VERSION
-        value: 22
+        value: 20
       # Set both of these in the Render dashboard, not here - the auth token is
       # a secret and this file is committed.
       - key: TURSO_DATABASE_URL

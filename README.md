@@ -15,8 +15,7 @@ npm start
 
 Open **http://localhost:3000**.
 
-That is the whole setup. **Node 22.5 or newer** is the only requirement - it ships the
-SQLite driver this uses, so there is nothing to compile and nothing to install.
+That is the whole setup. **Node 20 or newer** is the only requirement.
 
 Check yours with `node -v`.
 
@@ -147,41 +146,70 @@ Upload the *contents* of the folder, not the folder itself. The archive contains
 `node_modules` or `data` directory, so there is nothing to exclude - but note that the
 browser uploader ignores `.gitignore`, so never drag those two in by hand later.
 
-### 1b. Test it in the browser (optional but worth it)
+### 1b. Test it first (optional)
 
-On the repository page: **Code - Codespaces - Create codespace on main**. That gives you a
-Linux machine with Node 22, the dependencies already installed, and the Turso CLI, none of
-it on your own computer. In its terminal:
+You can skip straight to step 2 and test on the deployed URL instead. Render builds from the
+same repository, so a codespace only shortens the feedback loop; it is not required.
+
+#### Using a codespace
+
+On the repository page: **Code - Codespaces - Create codespace on main**. That is a Linux
+machine in a browser tab, with Node already on it. There is deliberately no `.devcontainer`
+in this repository: a custom container turns codespace creation into a Docker build instead
+of a cached image pull, which is slow and one more thing to go wrong. The default image is
+all this needs.
+
+In its terminal:
 
 ```
+npm install
 npm start
 ```
 
-Port 3000 forwards automatically and a preview opens. The first boot prints an
-administrator password - copy it before it scrolls past. Sign in, add a project and an
-entry, download the export. If it works there, it will work on Render.
+Codespaces notices the open port and offers to open a preview. The first boot prints an
+administrator password - copy it before it scrolls past.
 
-Stop the Codespace when you are finished. Free accounts get 120 core hours a month and a
-running 2-core machine spends 2 an hour.
+**If a codespace will not start** ("failed to start vs code remote server", or it hangs):
+delete it at [github.com/codespaces](https://github.com/codespaces) and create a fresh one.
+A half-created codespace does not recover. Check **View creation log** on the loading screen
+to see which step is stuck. If it keeps failing, skip this step entirely - it is only a
+convenience, and Render builds from the same repository either way.
+
+Stop the codespace when you finish. Free accounts get 120 core hours a month and a running
+2-core machine spends 2 an hour.
 
 ### 2. Create the database
 
-Sign up at [turso.tech](https://turso.tech) (free, no card). The CLI is already installed
-in the Codespace; run these in its terminal:
+Sign up at [turso.tech](https://turso.tech) (free, no card).
+
+**In the browser, no tools needed.** From the dashboard: **Create Database**, name it
+`timesheet`, and accept the defaults. Then open it and collect two things:
+
+- the **database URL**, which looks like `libsql://timesheet-yourorg.turso.io`
+- an **auth token**, from the database's tokens section - create one with full access
+
+Keep both for the next step. Treat the token like a password.
+
+**With the CLI instead,** if you have a terminal anywhere:
 
 ```
+curl -sSfL https://get.tur.so/install.sh | bash
+exec $SHELL
 turso auth login
 turso db create timesheet
-turso db show timesheet --url          # -> libsql://timesheet-yourorg.turso.io
-turso db tokens create timesheet       # -> a long token
+turso db show timesheet --url
+turso db tokens create timesheet
 ```
 
-Keep both. **Moving your existing data across:** because Turso is SQLite, upload the file
-you already have rather than retyping anything:
+**Bringing existing data across.** If you already have a `data/timesheet.db` from running
+locally, the CLI can upload it as-is, because Turso is SQLite:
 
 ```
 turso db create timesheet --from-file data/timesheet.db
 ```
+
+There is no browser equivalent for that, so it needs a terminal. Starting empty is fine
+otherwise - the app creates its own schema on first boot.
 
 ### 3. Deploy the app
 
