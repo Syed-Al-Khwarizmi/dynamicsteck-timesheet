@@ -48,7 +48,7 @@ document.querySelectorAll('nav button').forEach((btn) => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('nav button').forEach((b) => b.classList.remove('active'));
     btn.classList.add('active');
-    ['entries', 'employees', 'projects'].forEach((t) =>
+    ['entries', 'employees', 'projects', 'activity'].forEach((t) =>
       $(`tab-${t}`).classList.toggle('hidden', t !== btn.dataset.tab),
     );
   });

@@ -308,9 +308,9 @@ app.get('/api/employees', async (req, res) => {
   if (isAdmin(req)) return res.json(await store.listEmployees());
   // An employee needs their own record for the entry form and nothing else -
   // not colleagues' emails, rates, or roles.
+  const all = await store.listEmployees();
   res.json(
-    store
-      .listEmployees()
+    all
       .filter((e) => e.id === req.user.id)
       .map((e) => ({ id: e.id, name: e.name, active: e.active })),
   );

@@ -518,20 +518,18 @@ body:not(.is-admin) [data-admin] {
     flex: 1 1 100%;
   }
 
-  /* Tabs scroll sideways rather than wrapping into a tall stack. Momentum
-     scrolling keeps it feeling native on iOS. */
+  /* Let the tabs wrap onto a second line so every one stays visible. They used
+     to sit in a sideways-scrolling strip with the scrollbar suppressed, which
+     hid the admin tabs off the right edge of a narrow phone with no hint that
+     more existed - only "Time entries" showed. Wrapping keeps them all on screen. */
   nav {
     margin-left: 0;
     order: 3;
     flex: 1 1 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
     padding-bottom: 2px;
-  }
-
-  nav::-webkit-scrollbar {
-    display: none;
   }
 
   nav button {
