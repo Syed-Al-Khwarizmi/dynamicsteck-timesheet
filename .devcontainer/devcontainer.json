@@ -1,28 +1,20 @@
 {
   "name": "DynamicsTeck Timesheet",
-  // Node 22 or newer is required. Pinning it here means the Codespace matches
-  // what the app is tested against, with nothing to install by hand.
+
+  // A prebuilt image from Microsoft, pulled from cache in seconds.
+  //
+  // Deliberately no "features" block: any feature turns codespace creation into
+  // a Docker build instead of a cached pull, which costs minutes. Everything
+  // this project needs is already in this image.
   "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
 
-  "features": {
-    // The Turso CLI, for creating the hosted database from this terminal.
-    "ghcr.io/devcontainers/features/common-utils:2": {}
-  },
-
-  // Runs once when the Codespace is created.
-  "postCreateCommand": "npm install && curl -sSfL https://get.tur.so/install.sh | bash",
+  // Roughly ten seconds. The Turso CLI is not installed here because it is
+  // needed once, at deploy time, and downloading it on every codespace create
+  // would slow down every start. See .devcontainer/README.md for the one-liner.
+  "postCreateCommand": "npm install",
 
   "forwardPorts": [3000],
   "portsAttributes": {
-    "3000": {
-      "label": "Timesheet",
-      "onAutoForward": "openPreview"
-    }
-  },
-
-  "customizations": {
-    "vscode": {
-      "extensions": ["dbaeumer.vscode-eslint"]
-    }
+    "3000": { "label": "Timesheet", "onAutoForward": "openPreview" }
   }
 }

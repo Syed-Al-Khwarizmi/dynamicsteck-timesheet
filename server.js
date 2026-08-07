@@ -26,6 +26,50 @@ app.use(express.json({ limit: '256kb' }));
 const SESSION_DAYS = 7;
 const COOKIE = 'tt_session';
 
+/**
+ * Setting ADMIN_PASSWORD creates or resets that administrator on every boot.
+ *
+ * This exists because hosts with no shell - Render's free plan among them -
+ * leave no other way in if the first-run password scrolls out of the deploy
+ * log. Set the variable, redeploy, sign in, then delete the variable.
+ */
+const seedEmail = (process.env.ADMIN_EMAIL ?? 'admin@local').toLowerCase().trim();
+const seedPassword = process.env.ADMIN_PASSWORD ?? '';
+
+if (seedPassword) {
+  if (seedPassword.length < 8) {
+    console.error('\n  ADMIN_PASSWORD must be at least 8 characters. Ignoring it.\n');
+  } else {
+    const passwordHash = await hashPassword(seedPassword);
+    const existing = (await store.listEmployees()).find((e) => e.email.toLowerCase() === seedEmail);
+
+    if (existing) {
+      await store.setPassword(existing.id, passwordHash);
+      await store.updateEmployee(existing.id, { role: 'admin', active: true });
+      // A password change ends existing sessions, here as everywhere else.
+      await store.deleteSessionsForUser(existing.id);
+    } else {
+      const created = await store.insertEmployee({
+        name: await store.uniqueName('Administrator'),
+        email: seedEmail,
+        title: 'Administrator',
+        role: 'admin',
+        passwordHash,
+      });
+      await store.audit({
+        actorName: 'system', action: 'employee.create', entity: 'employee',
+        entityId: created.id, summary: `Created ${seedEmail} from ADMIN_PASSWORD`,
+      });
+    }
+
+    console.log('\n  ---------------------------------------------------------');
+    console.log(`   ADMIN_PASSWORD is set, so ${seedEmail} can sign in with it.`);
+    console.log('   Remove that environment variable once you are in: while it');
+    console.log('   is set, the password resets on every restart.');
+    console.log('  ---------------------------------------------------------');
+  }
+}
+
 // First run with no administrator: create one and print the credentials once.
 if (await store.countAdmins() === 0) {
   const password = suggestPassword();
@@ -776,7 +820,8 @@ app.listen(PORT, async () => {
   const neverSignedIn = (await store.listEmployees()).filter((e) => e.role === 'admin' && !e.lastLoginAt);
   if (neverSignedIn.length) {
     console.log('  No administrator has signed in yet.');
-    console.log('  Lost the password printed on first run? Run:  npm run reset-admin');
+    console.log('  Lost the password? Set ADMIN_PASSWORD in your environment and restart,');
+    console.log('  or run `npm run reset-admin` where you have a terminal.');
   }
   console.log('');
 });

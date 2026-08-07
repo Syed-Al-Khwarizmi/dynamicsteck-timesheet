@@ -208,15 +208,31 @@ password once:
    Password: ...
 ```
 
-Copy it before the log scrolls. If you miss it, open the Render **Shell** and run
-`npm run reset-admin`. Then change the password from the Employees tab.
+Copy it before the log scrolls.
+
+**If you miss it,** Render's free plan has no shell, so use the environment instead. In the
+Render dashboard add:
+
+| Key | Value |
+|---|---|
+| `ADMIN_PASSWORD` | a password of your choosing, 8 characters or more |
+| `ADMIN_EMAIL` | optional, defaults to `admin@local` |
+
+Redeploy. That account is created or reset on boot and its old sessions end. Sign in, then
+**delete `ADMIN_PASSWORD` again** - while it is set the password resets on every restart,
+and it sits in the dashboard in plain text.
 
 ### What the free tier costs you
 
-The service sleeps after about fifteen minutes of inactivity, so the first request each
-morning takes roughly a minute while it wakes. Every request after that is normal. If that is
-too slow, Render's cheapest paid plan removes it, or a scheduled ping every ten minutes keeps
-it awake.
+- **It sleeps** after about fifteen minutes without traffic, so the first request each morning
+  takes roughly a minute to wake. Everything after that is normal speed.
+- **No shell and no one-off jobs**, which is why admin recovery goes through `ADMIN_PASSWORD`
+  above rather than a command.
+- **No persistent disk** - irrelevant here, because the data lives in Turso.
+- 750 instance hours a month across all free services in the workspace.
+
+Render's cheapest paid plan removes the sleeping. A scheduled ping every ten minutes also
+keeps it awake, at the cost of consuming those 750 hours.
 
 Pushing to `main` redeploys automatically. Your data is in Turso, so deploys never touch it.
 
