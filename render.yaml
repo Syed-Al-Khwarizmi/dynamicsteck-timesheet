@@ -1,0 +1,19 @@
+# Render Blueprint. Point Render at this repository and it reads this file.
+# Docs: https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: dynamicsteck-timesheet
+    runtime: node
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      # Set both of these in the Render dashboard, not here - the auth token is
+      # a secret and this file is committed.
+      - key: TURSO_DATABASE_URL
+        sync: false
+      - key: TURSO_AUTH_TOKEN
+        sync: false

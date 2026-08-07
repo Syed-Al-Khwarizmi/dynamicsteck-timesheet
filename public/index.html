@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- Tints the browser chrome on Android and the status bar on iOS. -->
+<meta name="theme-color" content="#1B59A7">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Timesheet">
+<meta name="format-detection" content="telephone=no">
+<title>DynamicsTeck Timesheet</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <!-- Two overlapping diamonds, matching the mark in the logo. -->
+    <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
+      <rect x="10" y="3.5" width="16.5" height="16.5" rx="3" transform="rotate(45 18.25 11.75)" fill="#1B59A7"/>
+      <rect x="2.5" y="10" width="14" height="14" rx="3" transform="rotate(45 9.5 17)" fill="#5A9BE9" opacity="0.9"/>
+    </svg>
+    <h1>Dynamics<span>Teck</span> Timesheet</h1>
+  </div>
+  <div class="settings" data-admin>
+    <label for="set-currency">Currency</label>
+    <input id="set-currency" maxlength="3" style="width:60px;text-transform:uppercase">
+    <label for="set-priority">When both have a rate, use</label>
+    <select id="set-priority">
+      <option value="project">Project rate</option>
+      <option value="employee">Employee rate</option>
+    </select>
+  </div>
+  <nav>
+    <button data-tab="entries" class="active">Time entries</button>
+    <button data-tab="employees" data-admin>Employees</button>
+    <button data-tab="projects" data-admin>Projects</button>
+    <button data-tab="activity" data-admin>Activity</button>
+  </nav>
+  <div class="whoami">
+    <span id="who-name"></span>
+    <span id="who-role" class="pill no"></span>
+    <button class="link" id="signout">Sign out</button>
+  </div>
+</header>
+
+<main>
+
+  <!-- ============================ ENTRIES ============================ -->
+  <section id="tab-entries">
+    <div class="panel">
+      <h2>Log time</h2>
+      <div class="panel-body">
+        <form id="entry-form" class="row">
+          <input type="hidden" id="entry-id">
+          <div>
+            <label for="entry-date">Date</label>
+            <input type="date" id="entry-date" class="field-md" required>
+          </div>
+          <div data-admin>
+            <label for="entry-employee">Employee</label>
+            <select id="entry-employee" class="field-md"></select>
+          </div>
+          <div>
+            <label for="entry-project">Project</label>
+            <select id="entry-project" class="field-md" required></select>
+          </div>
+          <div>
+            <label for="entry-hours">Hours</label>
+            <input id="entry-hours" class="field-sm" placeholder="1.5" required>
+          </div>
+          <div data-admin>
+            <label for="entry-rate">Rate</label>
+            <input id="entry-rate" class="field-sm" placeholder="auto">
+          </div>
+          <div class="field-grow">
+            <label for="entry-notes">Notes</label>
+            <input id="entry-notes" style="width:100%" placeholder="What was done">
+          </div>
+          <div>
+            <label for="entry-billable">Billable</label>
+            <input type="checkbox" id="entry-billable" checked style="width:18px;height:18px">
+          </div>
+          <button class="btn" type="submit" id="entry-submit">Add entry</button>
+          <button class="btn ghost hidden" type="button" id="entry-cancel">Cancel</button>
+        </form>
+        <p class="muted" style="margin:10px 0 0;font-size:13px">
+          Hours accept <strong>1.5</strong>, <strong>1:30</strong> or <strong>1h30m</strong>.
+          <span id="rate-hint"></span>
+        </p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Filter</h2>
+      <div class="panel-body">
+        <div class="row">
+          <div>
+            <label for="filter-from">From</label>
+            <input type="date" id="filter-from" class="field-md">
+          </div>
+          <div>
+            <label for="filter-to">To</label>
+            <input type="date" id="filter-to" class="field-md">
+          </div>
+          <div data-admin>
+            <label for="filter-employee">Employee</label>
+            <select id="filter-employee" class="field-md"></select>
+          </div>
+          <div>
+            <label for="filter-project">Project</label>
+            <select id="filter-project" class="field-md"></select>
+          </div>
+          <button class="btn ghost" id="filter-clear" type="button">Clear</button>
+          <button class="btn" id="export-btn" type="button" style="margin-left:auto">
+            Export to Excel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="totals">
+      <div><span>Entries</span><strong class="num" id="stat-count">0</strong></div>
+      <div><span>Total hours</span><strong class="num" id="stat-total">0.00</strong></div>
+      <div><span>Billable hours</span><strong class="num" id="stat-billable">0.00</strong></div>
+      <div data-admin><span>Amount</span><strong class="num accent" id="stat-amount">0.00</strong></div>
+    </div>
+
+    <p id="unrated-warning" class="warning hidden"></p>
+
+    <div class="panel">
+      <h2>Entries</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th><th>Employee</th><th>Project</th>
+            <th class="right">Hours</th><th class="right" data-admin>Rate</th>
+            <th class="right" data-admin>Amount</th><th>Billable</th><th>Notes</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="entries-body"></tbody>
+      </table>
+      <div class="empty hidden" id="entries-empty">
+        No entries yet. Add one above to get started.
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ EMPLOYEES ============================ -->
+  <section id="tab-employees" class="hidden">
+    <div class="panel">
+      <h2>Add an employee</h2>
+      <div class="panel-body">
+        <form id="employee-form" class="row">
+          <div class="field-grow">
+            <label for="emp-name">Name</label>
+            <input id="emp-name" style="width:100%" required placeholder="Jane Okafor">
+          </div>
+          <div class="field-grow">
+            <label for="emp-title">Job title</label>
+            <input id="emp-title" style="width:100%" placeholder="Senior Consultant">
+          </div>
+          <div class="field-grow">
+            <label for="emp-email">Email</label>
+            <input type="email" id="emp-email" style="width:100%" placeholder="jane@dynamicsteck.com">
+          </div>
+          <div>
+            <label for="emp-rate">Hourly rate</label>
+            <input id="emp-rate" class="field-sm" placeholder="185">
+          </div>
+          <div>
+            <label for="emp-role">Role</label>
+            <select id="emp-role" class="field-md">
+              <option value="employee">Employee</option>
+              <option value="admin">Administrator</option>
+            </select>
+          </div>
+          <div>
+            <label for="emp-password">Password</label>
+            <input type="password" id="emp-password" class="field-md" placeholder="min 8 characters">
+          </div>
+          <button class="btn" type="submit">Add employee</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Employees</h2>
+      <table>
+        <thead>
+          <tr><th>Name</th><th>Job title</th><th>Email</th><th>Role</th><th class="right">Rate</th><th>Sign in</th><th>Status</th><th></th></tr>
+        </thead>
+        <tbody id="employees-body"></tbody>
+      </table>
+      <div class="empty hidden" id="employees-empty">No employees yet.</div>
+    </div>
+  </section>
+
+  <!-- ============================ PROJECTS ============================ -->
+  <section id="tab-projects" class="hidden">
+    <div class="panel">
+      <h2>Add a project</h2>
+      <div class="panel-body">
+        <form id="project-form" class="row">
+          <div>
+            <label for="proj-code">Code</label>
+            <input id="proj-code" class="field-sm" placeholder="ACME-01">
+          </div>
+          <div class="field-grow">
+            <label for="proj-name">Project name</label>
+            <input id="proj-name" style="width:100%" required placeholder="ERP Implementation">
+          </div>
+          <div class="field-grow">
+            <label for="proj-client">Client</label>
+            <input id="proj-client" style="width:100%" placeholder="Acme Manufacturing">
+          </div>
+          <div>
+            <label for="proj-rate">Hourly rate</label>
+            <input id="proj-rate" class="field-sm" placeholder="225">
+          </div>
+          <button class="btn" type="submit">Add project</button>
+        </form>
+        <div id="assign-panel" style="margin-top:14px">
+          <label>Who can log time to this project</label>
+          <div id="assign-list" class="assign-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Projects</h2>
+      <table>
+        <thead>
+          <tr><th>Code</th><th>Project</th><th>Client</th><th class="right">Rate</th><th>Team</th><th>Status</th><th></th></tr>
+        </thead>
+        <tbody id="projects-body"></tbody>
+      </table>
+      <div class="empty hidden" id="projects-empty">No projects yet.</div>
+    </div>
+  </section>
+
+  <!-- ============================ ACTIVITY ============================ -->
+  <section id="tab-activity" class="hidden">
+    <div class="panel">
+      <h2>Activity log</h2>
+      <div class="panel-body">
+        <p class="muted" style="margin:0 0 12px;font-size:13px">
+          Every change is recorded here and nothing in the app edits or removes these rows.
+        </p>
+        <div class="row">
+          <div>
+            <label for="audit-action">Action</label>
+            <select id="audit-action" class="field-md">
+              <option value="">Everything</option>
+              <option value="entry">Time entries</option>
+              <option value="employee">Employees</option>
+              <option value="project">Projects</option>
+              <option value="auth">Sign in and out</option>
+              <option value="data">Exports</option>
+            </select>
+          </div>
+          <div>
+            <label for="audit-from">From</label>
+            <input type="date" id="audit-from" class="field-md">
+          </div>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr><th>When</th><th>Who</th><th>Action</th><th>What happened</th></tr>
+        </thead>
+        <tbody id="audit-body"></tbody>
+      </table>
+      <div class="empty hidden" id="audit-empty">Nothing recorded yet.</div>
+    </div>
+  </section>
+
+</main>
+
+<div id="lock" class="lock hidden">
+  <form id="lock-form" class="lock-box">
+    <svg width="34" height="34" viewBox="0 0 30 30" aria-hidden="true">
+      <rect x="10" y="3.5" width="16.5" height="16.5" rx="3" transform="rotate(45 18.25 11.75)" fill="#1B59A7"/>
+      <rect x="2.5" y="10" width="14" height="14" rx="3" transform="rotate(45 9.5 17)" fill="#5A9BE9" opacity="0.9"/>
+    </svg>
+    <h2>DynamicsTeck Timesheet</h2>
+    <p class="muted">Sign in to continue.</p>
+    <input type="email" id="lock-email" placeholder="you@dynamicsteck.com" autocomplete="username" required>
+    <input type="password" id="lock-password" placeholder="Password" autocomplete="current-password" required>
+    <button class="btn" type="submit" id="lock-submit">Sign in</button>
+    <p id="lock-error" class="lock-error"></p>
+  </form>
+</div>
+
+<div id="toast" role="status" aria-live="polite"></div>
+<script src="app.js"></script>
+</body>
+</html>

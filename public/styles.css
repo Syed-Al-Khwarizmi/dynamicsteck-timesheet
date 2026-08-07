@@ -1,0 +1,718 @@
+/* --------------------------------------------------------------------------
+   Palette sampled directly from the DynamicsTeck logo:
+     #1B59A7  rear diamond, the primary brand blue
+     #5A9BE9  front diamond, the light accent
+     #1F1F1F  wordmark black
+   -------------------------------------------------------------------------- */
+:root {
+  --brand: #1b59a7;
+  --brand-dark: #14477f;
+  --brand-light: #5a9be9;
+  --brand-pale: #eaf2fc;
+
+  --ink: #1f1f1f;
+  --grey: #5b6472;
+  --mist: #8b95a3;
+  --rule: #e2e7ee;
+  --paper: #f6f8fb;
+  --card: #ffffff;
+
+  --ok: #1a7f52;
+  --warn: #b45309;
+  --bad: #b3261e;
+
+  --radius: 4px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 15px/1.5 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* Every number here is hours or money, so it gets tabular figures. */
+.num {
+  font-variant-numeric: tabular-nums;
+  font-family: 'Consolas', 'SF Mono', ui-monospace, monospace;
+}
+
+/* --- header --------------------------------------------------------------- */
+header {
+  background: var(--card);
+  border-bottom: 1px solid var(--rule);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.logo span {
+  color: var(--brand);
+}
+
+nav {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+}
+
+nav button {
+  background: none;
+  border: none;
+  border-radius: var(--radius);
+  padding: 7px 14px;
+  font: inherit;
+  font-weight: 500;
+  color: var(--grey);
+  cursor: pointer;
+}
+
+nav button:hover {
+  background: var(--brand-pale);
+  color: var(--brand);
+}
+
+nav button.active {
+  background: var(--brand);
+  color: #fff;
+}
+
+/* --- layout --------------------------------------------------------------- */
+main {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.panel {
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  margin-bottom: 18px;
+}
+
+.panel > h2 {
+  margin: 0;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--rule);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--grey);
+}
+
+.panel-body {
+  padding: 16px;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--grey);
+  margin-bottom: 4px;
+}
+
+input,
+select,
+textarea {
+  font: inherit;
+  padding: 7px 10px;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  background: #fff;
+  color: var(--ink);
+  min-width: 0;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid var(--brand-light);
+  outline-offset: -1px;
+  border-color: var(--brand);
+}
+
+.field-sm {
+  width: 120px;
+}
+.field-md {
+  width: 180px;
+}
+.field-grow {
+  flex: 1 1 220px;
+}
+
+button.btn {
+  font: inherit;
+  font-weight: 600;
+  padding: 8px 16px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: var(--brand);
+  color: #fff;
+  cursor: pointer;
+}
+
+button.btn:hover {
+  background: var(--brand-dark);
+}
+
+button.btn.ghost {
+  background: #fff;
+  color: var(--brand);
+  border-color: var(--rule);
+}
+
+button.btn.ghost:hover {
+  border-color: var(--brand);
+  background: var(--brand-pale);
+}
+
+button.link {
+  background: none;
+  border: none;
+  color: var(--grey);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: var(--radius);
+}
+
+button.link:hover {
+  color: var(--bad);
+  background: #fdecea;
+}
+
+/* --- tables --------------------------------------------------------------- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--grey);
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--rule);
+  white-space: nowrap;
+}
+
+td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--rule);
+  font-size: 14px;
+}
+
+tbody tr:nth-child(even) {
+  background: #fafbfd;
+}
+
+tbody tr:hover {
+  background: var(--brand-pale);
+}
+
+.right {
+  text-align: right;
+}
+
+.muted {
+  color: var(--mist);
+}
+
+.pill {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 1px 7px;
+  border-radius: 10px;
+}
+
+.pill.yes {
+  background: #e4f4ec;
+  color: var(--ok);
+}
+
+.pill.no {
+  background: #eef1f5;
+  color: var(--grey);
+}
+
+.pill.off {
+  background: #fdecea;
+  color: var(--bad);
+}
+
+/* --- totals --------------------------------------------------------------- */
+.totals {
+  display: flex;
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+
+.totals div {
+  flex: 1;
+  background: var(--card);
+  padding: 12px 16px;
+}
+
+.totals span {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--mist);
+}
+
+.totals strong {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.totals strong.accent {
+  color: var(--brand);
+}
+
+/* --- messages ------------------------------------------------------------- */
+#toast {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  max-width: 380px;
+  padding: 11px 15px;
+  border-radius: var(--radius);
+  color: #fff;
+  background: var(--ink);
+  box-shadow: 0 6px 20px rgb(0 0 0 / 0.18);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.18s, transform 0.18s;
+  pointer-events: none;
+}
+
+#toast.show {
+  opacity: 1;
+  transform: none;
+}
+
+#toast.error {
+  background: var(--bad);
+}
+
+.empty {
+  padding: 40px 16px;
+  text-align: center;
+  color: var(--mist);
+}
+
+/* !important on purpose. Anything that sets its own `display` - .lock, .totals,
+   .settings, .whoami - is a single-class rule too, so without it whichever
+   appears later in the file wins and "hidden" silently does nothing. */
+.hidden {
+  display: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
+
+/* --- settings strip + warnings -------------------------------------------- */
+.settings {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--grey);
+  padding-left: 8px;
+  border-left: 1px solid var(--rule);
+}
+
+.settings label {
+  margin: 0;
+  white-space: nowrap;
+}
+
+.settings input,
+.settings select {
+  padding: 4px 7px;
+  font-size: 13px;
+}
+
+.warning {
+  margin: -8px 0 18px;
+  padding: 9px 14px;
+  border-left: 3px solid var(--warn);
+  background: #fdf5e7;
+  color: #8a4a08;
+  font-size: 13px;
+  border-radius: var(--radius);
+}
+
+/* A rate that came from somewhere other than the obvious place should say so. */
+.src {
+  font-size: 10px;
+  color: var(--mist);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* --- password gate -------------------------------------------------------- */
+.lock {
+  position: fixed;
+  inset: 0;
+  background: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.lock-box {
+  width: 320px;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 30px 26px;
+  text-align: center;
+  box-shadow: 0 8px 30px rgb(16 24 40 / 0.08);
+}
+
+.lock-box h2 {
+  margin: 12px 0 4px;
+  font-size: 17px;
+}
+
+.lock-box p {
+  margin: 0 0 18px;
+  font-size: 13px;
+}
+
+.lock-box input {
+  width: 100%;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.lock-box .btn {
+  width: 100%;
+}
+
+.lock-error {
+  margin: 12px 0 0 !important;
+  color: var(--bad);
+  min-height: 18px;
+}
+
+/* --- identity + role-gated chrome ----------------------------------------- */
+.whoami {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-left: 12px;
+  margin-left: 12px;
+  border-left: 1px solid var(--rule);
+  font-size: 13px;
+}
+
+.whoami span:first-child {
+  font-weight: 600;
+}
+
+/* Set by JS on the body once the role is known. Employees never render the
+   admin-only controls at all, rather than having them hidden with CSS. */
+body:not(.is-admin) [data-admin] {
+  display: none !important;
+}
+
+.assign-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  padding: 10px 12px;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--paper);
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.assign-list label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--ink);
+  text-transform: none;
+  letter-spacing: 0;
+  cursor: pointer;
+}
+
+.audit-detail {
+  font-size: 12px;
+  color: var(--mist);
+}
+
+.pill.admin {
+  background: var(--brand-pale);
+  color: var(--brand);
+}
+
+/* ===========================================================================
+   Small screens
+   Two breakpoints: 900px for the header and tables, 560px for form fields.
+   =========================================================================== */
+
+@media (max-width: 900px) {
+  main {
+    padding: 14px;
+  }
+
+  header {
+    padding: 10px 14px;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  .logo {
+    flex: 1 1 100%;
+  }
+
+  /* Tabs scroll sideways rather than wrapping into a tall stack. Momentum
+     scrolling keeps it feeling native on iOS. */
+  nav {
+    margin-left: 0;
+    order: 3;
+    flex: 1 1 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+
+  nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  nav button {
+    white-space: nowrap;
+    padding: 9px 14px;
+  }
+
+  .whoami {
+    margin-left: auto;
+    padding-left: 0;
+    border-left: none;
+    order: 2;
+  }
+
+  .settings {
+    order: 4;
+    flex: 1 1 100%;
+    padding-left: 0;
+    border-left: none;
+    border-top: 1px solid var(--rule);
+    padding-top: 10px;
+    flex-wrap: wrap;
+  }
+
+  /* ---- tables become cards --------------------------------------------
+     Eight to ten columns cannot be read on a phone, and a sideways-scrolling
+     table hides the columns that matter. Each row becomes a card and every
+     cell carries its own label from the data-label attribute. */
+  table,
+  thead,
+  tbody,
+  tr,
+  th,
+  td {
+    display: block;
+  }
+
+  thead {
+    display: none;
+  }
+
+  tbody tr,
+  tbody tr:nth-child(even) {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    margin: 0 12px 10px;
+    padding: 4px 0;
+  }
+
+  tbody tr:hover {
+    background: var(--card);
+  }
+
+  tbody td {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 14px;
+    border: none;
+    padding: 7px 12px;
+    text-align: right;
+  }
+
+  tbody td::before {
+    content: attr(data-label);
+    flex: 0 0 auto;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--mist);
+  }
+
+  /* Cells with no label are structural, not data. */
+  tbody td:not([data-label])::before {
+    content: none;
+  }
+
+  tbody td.actions {
+    justify-content: flex-end;
+    gap: 4px;
+    border-top: 1px solid var(--rule);
+    margin-top: 3px;
+    padding-top: 9px;
+  }
+
+  .empty {
+    margin: 0 12px 12px;
+  }
+
+  .totals {
+    flex-wrap: wrap;
+  }
+
+  .totals div {
+    flex: 1 1 45%;
+  }
+}
+
+@media (max-width: 560px) {
+  /* Anything under 16px makes iOS Safari zoom the whole page on focus, and it
+     never zooms back out. */
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+    padding: 9px 11px;
+  }
+
+  .field-sm,
+  .field-md,
+  .field-grow {
+    width: 100%;
+    flex: 1 1 100%;
+  }
+
+  .row {
+    gap: 10px;
+  }
+
+  .row > div {
+    flex: 1 1 100%;
+  }
+
+  .panel-body {
+    padding: 12px;
+  }
+
+  button.btn {
+    width: 100%;
+    padding: 11px 16px;
+  }
+
+  /* Comfortable thumb targets. 40px is the practical floor for a text button
+     sitting in a row of other text buttons. */
+  button.link {
+    min-height: 40px;
+    padding: 0 12px;
+    font-size: 14px;
+  }
+
+  nav button {
+    min-height: 40px;
+  }
+
+  .lock-box {
+    width: 100%;
+    max-width: 360px;
+    padding: 26px 20px;
+  }
+
+  #toast {
+    right: 12px;
+    left: 12px;
+    bottom: 12px;
+    max-width: none;
+  }
+
+  .totals div {
+    flex: 1 1 100%;
+  }
+
+  .whoami span:first-child {
+    max-width: 40vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+/* A coarse pointer means a finger, whatever the screen size. */
+@media (pointer: coarse) {
+  button.link,
+  nav button {
+    min-height: 40px;
+  }
+
+  input[type='checkbox'] {
+    width: 20px;
+    height: 20px;
+  }
+}
